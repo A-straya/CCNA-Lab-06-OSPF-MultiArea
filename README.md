@@ -1,19 +1,14 @@
-
-
-<h1 align="center"> CCNA Lab 06</h1>
+<h1 align="center">CCNA Lab 06</h1>
 
 <h3 align="center">
-Enterprise OSPF Multi-Area Routing
+Enterprise OSPF Routing
 </h3>
 
 <p align="center">
 
 <img src="https://img.shields.io/badge/Cisco-Packet%20Tracer-1BA0D7?style=for-the-badge&logo=cisco&logoColor=white">
-
-<img src="https://img.shields.io/badge/Routing-OSPF-0052CC?style=for-the-badge">
-
+<img src="https://img.shields.io/badge/Routing-OSPF-blue?style=for-the-badge">
 <img src="https://img.shields.io/badge/Level-Intermediate-00C853?style=for-the-badge">
-
 <img src="https://img.shields.io/badge/Status-Completed-success?style=for-the-badge">
 
 </p>
@@ -22,24 +17,19 @@ Enterprise OSPF Multi-Area Routing
 
 #  Overview
 
-This project simulates an enterprise network using **OSPF (Open Shortest Path First)** to provide dynamic routing between multiple departments.
+This project demonstrates the deployment of **Open Shortest Path First (OSPF)** in a small enterprise network.
 
-The objective is to replace static routing with a scalable routing protocol capable of automatically discovering networks, exchanging routing information, and adapting to topology changes.
+The lab replaces static routing with a dynamic routing protocol, allowing routers to automatically exchange routing information and maintain connectivity between different departments.
 
-This lab reflects how medium and large organizations design their internal routing infrastructure.
+This project focuses on practical enterprise routing concepts commonly found in real-world Cisco environments.
 
 ---
+
 #  Scenario
 
-ABC Technologies has expanded its infrastructure into three departments:
+ABC Technologies has expanded its infrastructure into two departments connected through dedicated routers.
 
--  Administration
--  Sales
--  IT Department
-
-Each department operates on its own LAN while maintaining secure communication with the rest of the organization.
-
-As the network administrator, your task is to deploy OSPF Multi-Area Routing to replace static routes, optimize routing efficiency, and ensure full connectivity across the enterprise network.
+As the network administrator, your objective is to deploy OSPF to create a scalable and reliable routing environment while ensuring seamless communication across the enterprise network.
 
 ---
 
@@ -49,9 +39,8 @@ As the network administrator, your task is to deploy OSPF Multi-Area Routing to 
 - Configure IPv4 addressing
 - Configure OSPF Process ID
 - Configure Router IDs
-- Configure OSPF Areas
 - Advertise connected networks
-- Verify neighbor relationships
+- Establish OSPF neighbor relationships
 - Verify routing tables
 - Test end-to-end connectivity
 - Troubleshoot routing issues
@@ -62,37 +51,45 @@ As the network administrator, your task is to deploy OSPF Multi-Area Routing to 
 
 | Device | Quantity |
 |---------|---------:|
-| Cisco 2911 Routers | 3 |
-| Cisco 2960 Switches | 3 |
-| PCs | 6 |
+| Cisco 1941 Routers | 2 |
+| Cisco 2960 Switches | 2 |
+| PCs | 4 |
 
 ---
 
 #  Enterprise Topology
 
-```        Administration
+```
 
-   PC1              PC2
-    |                |
-+------------------------+
-|          SW1           |
-+------------------------+
-           |
-          R1
-           |
-=========================
-      10.0.12.0/30
-=========================
-           |
-          R2
-           |
-+------------------------+
-|          SW2           |
-+------------------------+
-    |                |
-   PC3              PC4
+            Administration Department
 
-      IT Department             
+      PC1                    PC2
+       |                      |
++-------------------------------+
+|             SW1               |
++-------------------------------+
+               |
+            Gig0/0
+               |
+              R1
+            Gig0/1
+               |
+====================================
+          10.0.12.0 /30
+====================================
+               |
+            Gig0/0
+              R2
+            Gig0/1
+               |
++-------------------------------+
+|             SW2               |
++-------------------------------+
+       |                      |
+      PC3                    PC4
+
+             IT Department
+
 ```
 
 ---
@@ -100,25 +97,22 @@ As the network administrator, your task is to deploy OSPF Multi-Area Routing to 
 #  IP Addressing Plan
 
 | Device | Interface | IP Address |
-|---------|-----------|----------------|
+|---------|-----------|------------|
 | R1 | G0/0 | 192.168.10.1 /24 |
 | R1 | G0/1 | 10.0.12.1 /30 |
 | R2 | G0/0 | 10.0.12.2 /30 |
 | R2 | G0/1 | 192.168.20.1 /24 |
-| R2 | G0/2 | 10.0.23.1 /30 |
-| R3 | G0/0 | 10.0.23.2 /30 |
-| R3 | G0/1 | 192.168.30.1 /24 |
 
 ---
 
-#  OSPF Area Design
+#  PC Addressing
 
-| Area | Devices |
-|------|---------|
-| Area 0 | R1 ↔ R2 |
-| Area 1 | R2 ↔ R3 |
-
-**R2 acts as the Area Border Router (ABR), connecting Area 0 and Area 1.**
+| Device | IP Address | Gateway |
+|---------|------------|----------|
+| PC1 | 192.168.10.10 | 192.168.10.1 |
+| PC2 | 192.168.10.20 | 192.168.10.1 |
+| PC3 | 192.168.20.10 | 192.168.20.1 |
+| PC4 | 192.168.20.20 | 192.168.20.1 |
 
 ---
 
@@ -126,11 +120,11 @@ As the network administrator, your task is to deploy OSPF Multi-Area Routing to 
 
 - Configure router interfaces
 - Configure hostnames
-- Configure Router IDs
+- Configure IPv4 addressing
 - Enable OSPF
-- Assign interfaces to the correct OSPF areas
+- Configure Router IDs
 - Advertise connected networks
-- Verify neighbor relationships
+- Verify OSPF neighbors
 - Verify routing tables
 - Test end-to-end connectivity
 
@@ -139,11 +133,11 @@ As the network administrator, your task is to deploy OSPF Multi-Area Routing to 
 #  Verification Commands
 
 ```bash
+show ip interface brief
+
 show ip route
 
 show ip ospf neighbor
-
-show ip ospf database
 
 show ip protocols
 
@@ -158,77 +152,75 @@ traceroute
 
 #  Expected Results
 
-- OSPF neighbor relationships are successfully established.
-- R2 functions as the Area Border Router (ABR).
-- Dynamic routes appear in every routing table.
-- All six PCs communicate successfully.
-- The enterprise network converges automatically after topology changes.
+- OSPF neighbor relationship is successfully established.
+- Dynamic routes appear in both routing tables.
+- All PCs communicate successfully across departments.
+- The routing table updates automatically after topology changes.
 
 ---
 
 #  Skills Practiced
 
-- Enterprise Network Design
 - Dynamic Routing
-- OSPF Multi-Area Configuration
-- Area Border Router (ABR)
+- OSPF Configuration
 - Cisco IOS CLI
-- Routing Verification
+- Enterprise Routing
+- Network Verification
 - Network Troubleshooting
 
 ---
 
 #  Real-World Applications
 
-OSPF Multi-Area is commonly deployed in:
+The concepts implemented in this lab are widely used in:
 
 - Enterprise Networks
 - Universities
 - Hospitals
 - Financial Institutions
 - Government Organizations
-- Large Corporate Campuses
+- Corporate Campuses
 
 ---
 
 #  Future Improvements
 
 - OSPF Authentication
-- Stub Areas
-- NSSA
 - Route Summarization
+- Default Route Advertisement
+- Passive Interfaces
 - IPv6 OSPF
-- Redundant Links
-- Dual ISP Connectivity
+- Multi-Area OSPF
 
 ---
 
 #  Repository Structure
 
 ```
-CCNA-Lab-06-OSPF-MultiArea/
+CCNA-Lab-06-OSPF/
+
+│
 
 ├── README.md
-├── CCNA-Lab-06.pkt
+
+├── CCNA-Lab-06-OSPF.pkt
+
 └── images/
 ```
 
 ---
 
-
-</p>
 #  Author
 
 ### Aya Hathout
 
 **Network & Cybersecurity Student**
 
-Building practical networking and cybersecurity projects while documenting my learning journey through hands-on Cisco labs.
 
----
 
 <p align="center">
 
-⭐ If you enjoyed this project, consider giving it a star!
+⭐ If you found this project useful, consider giving it a star!
 
 </p>
+
