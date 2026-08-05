@@ -43,7 +43,7 @@ As the network administrator, your task is to deploy OSPF Multi-Area Routing to 
 
 ---
 
-# 🎯 Objectives
+#  Objectives
 
 - Configure router hostnames
 - Configure IPv4 addressing
@@ -70,45 +70,29 @@ As the network administrator, your task is to deploy OSPF Multi-Area Routing to 
 
 #  Enterprise Topology
 
-```
-                  AREA 0
+```        Administration
 
-        Administration LAN
+   PC1              PC2
+    |                |
++------------------------+
+|          SW1           |
++------------------------+
+           |
+          R1
+           |
+=========================
+      10.0.12.0/30
+=========================
+           |
+          R2
+           |
++------------------------+
+|          SW2           |
++------------------------+
+    |                |
+   PC3              PC4
 
-      PC1              PC2
-       |                |
-      +------------------+
-      |       SW1        |
-      +------------------+
-             |
-             |
-            R1
-             |
-=============|================
-             |
-            R2
-             |
-      +------------------+
-      |       SW2        |
-      +------------------+
-       |                |
-      PC3              PC4
-
-          Sales LAN
-
-=============|================
-
-            R3
-             |
-      +------------------+
-      |       SW3        |
-      +------------------+
-       |                |
-      PC5              PC6
-
-          IT Department
-
-               AREA 1
+      IT Department             
 ```
 
 ---
