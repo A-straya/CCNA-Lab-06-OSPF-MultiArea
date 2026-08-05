@@ -29,23 +29,29 @@ The objective is to replace static routing with a scalable routing protocol capa
 This lab reflects how medium and large organizations design their internal routing infrastructure.
 
 ---
-
 #  Scenario
 
-ABC Technologies has expanded its infrastructure into multiple departments connected through three routers.
+ABC Technologies has expanded its infrastructure into three departments:
 
-As the network administrator, your responsibility is to deploy OSPF to ensure reliable communication between all network segments while maintaining a scalable routing architecture.
+-  Administration
+-  Sales
+-  IT Department
+
+Each department operates on its own LAN while maintaining secure communication with the rest of the organization.
+
+As the network administrator, your task is to deploy OSPF Multi-Area Routing to replace static routes, optimize routing efficiency, and ensure full connectivity across the enterprise network.
 
 ---
 
-#  Objectives
+# 🎯 Objectives
 
 - Configure router hostnames
-- Assign IPv4 addresses
+- Configure IPv4 addressing
 - Configure OSPF Process ID
 - Configure Router IDs
+- Configure OSPF Areas
 - Advertise connected networks
-- Establish OSPF neighbor relationships
+- Verify neighbor relationships
 - Verify routing tables
 - Test end-to-end connectivity
 - Troubleshoot routing issues
@@ -56,34 +62,53 @@ As the network administrator, your responsibility is to deploy OSPF to ensure re
 
 | Device | Quantity |
 |---------|---------:|
-| Cisco Routers | 3 |
-| Cisco Switches | 3 |
+| Cisco 2911 Routers | 3 |
+| Cisco 2960 Switches | 3 |
 | PCs | 6 |
 
 ---
 
-#  Planned Topology
+#  Enterprise Topology
 
 ```
-                    AREA 0
+                  AREA 0
 
-          PC1             PC2
-           |               |
-          SW1-------------SW2
-            |             |
-            |             |
-           R1============R2
-                          |
-                          |
-                     Serial Link
-                          |
-                         R3
-                          |
-                         SW3
-                       /     \
-                    PC5      PC6
+        Administration LAN
 
-                    AREA 1
+      PC1              PC2
+       |                |
+      +------------------+
+      |       SW1        |
+      +------------------+
+             |
+             |
+            R1
+             |
+=============|================
+             |
+            R2
+             |
+      +------------------+
+      |       SW2        |
+      +------------------+
+       |                |
+      PC3              PC4
+
+          Sales LAN
+
+=============|================
+
+            R3
+             |
+      +------------------+
+      |       SW3        |
+      +------------------+
+       |                |
+      PC5              PC6
+
+          IT Department
+
+               AREA 1
 ```
 
 ---
@@ -102,16 +127,28 @@ As the network administrator, your responsibility is to deploy OSPF to ensure re
 
 ---
 
+#  OSPF Area Design
+
+| Area | Devices |
+|------|---------|
+| Area 0 | R1 ↔ R2 |
+| Area 1 | R2 ↔ R3 |
+
+**R2 acts as the Area Border Router (ABR), connecting Area 0 and Area 1.**
+
+---
+
 #  Configuration Tasks
 
-- Configure all router interfaces
-- Configure router hostnames
+- Configure router interfaces
+- Configure hostnames
 - Configure Router IDs
 - Enable OSPF
+- Assign interfaces to the correct OSPF areas
 - Advertise connected networks
 - Verify neighbor relationships
 - Verify routing tables
-- Test connectivity using Ping and Traceroute
+- Test end-to-end connectivity
 
 ---
 
@@ -122,11 +159,11 @@ show ip route
 
 show ip ospf neighbor
 
-show ip ospf interface
+show ip ospf database
 
 show ip protocols
 
-show ip ospf database
+show ip ospf interface
 
 ping
 
@@ -137,20 +174,21 @@ traceroute
 
 #  Expected Results
 
-- All routers establish OSPF neighbor relationships.
-- Remote networks appear automatically in the routing table.
-- Every PC can communicate successfully with all other networks.
-- End-to-end connectivity is verified.
-- Dynamic routes update automatically if the topology changes.
+- OSPF neighbor relationships are successfully established.
+- R2 functions as the Area Border Router (ABR).
+- Dynamic routes appear in every routing table.
+- All six PCs communicate successfully.
+- The enterprise network converges automatically after topology changes.
 
 ---
 
 #  Skills Practiced
 
-- Dynamic Routing
-- OSPF Configuration
-- Cisco IOS CLI
 - Enterprise Network Design
+- Dynamic Routing
+- OSPF Multi-Area Configuration
+- Area Border Router (ABR)
+- Cisco IOS CLI
 - Routing Verification
 - Network Troubleshooting
 
@@ -158,14 +196,14 @@ traceroute
 
 #  Real-World Applications
 
-OSPF is one of the most widely deployed Interior Gateway Protocols (IGPs) and is commonly used in:
+OSPF Multi-Area is commonly deployed in:
 
 - Enterprise Networks
 - Universities
 - Hospitals
 - Financial Institutions
 - Government Organizations
-- Data Centers
+- Large Corporate Campuses
 
 ---
 
@@ -173,11 +211,11 @@ OSPF is one of the most widely deployed Interior Gateway Protocols (IGPs) and is
 
 - OSPF Authentication
 - Stub Areas
-- Totally Stubby Areas
 - NSSA
 - Route Summarization
 - IPv6 OSPF
 - Redundant Links
+- Dual ISP Connectivity
 
 ---
 
@@ -186,17 +224,15 @@ OSPF is one of the most widely deployed Interior Gateway Protocols (IGPs) and is
 ```
 CCNA-Lab-06-OSPF-MultiArea/
 
-│
-
 ├── README.md
-
 ├── CCNA-Lab-06.pkt
-
 └── images/
 ```
 
 ---
 
+
+</p>
 #  Author
 
 ### Aya Hathout
